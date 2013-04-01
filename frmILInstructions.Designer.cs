@@ -1,6 +1,6 @@
 ﻿namespace MSIL
 {
-    partial class frmAssemblies
+    partial class frmILInstructions
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.cbMethods = new System.Windows.Forms.ComboBox();
             this.tbManualEntry = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -104,9 +104,9 @@
             // colLineNr
             // 
             this.colLineNr.DataPropertyName = "Offset";
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            dataGridViewCellStyle4.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
-            this.colLineNr.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            dataGridViewCellStyle1.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
+            this.colLineNr.DefaultCellStyle = dataGridViewCellStyle1;
             this.colLineNr.HeaderText = "Line";
             this.colLineNr.MinimumWidth = 50;
             this.colLineNr.Name = "colLineNr";
@@ -144,7 +144,7 @@
             this.pnlClassInfo.Location = new System.Drawing.Point(0, 0);
             this.pnlClassInfo.Name = "pnlClassInfo";
             this.pnlClassInfo.Size = new System.Drawing.Size(555, 187);
-            this.pnlClassInfo.TabIndex = 5;
+            this.pnlClassInfo.TabIndex = 0;
             // 
             // gbManualEntry
             // 

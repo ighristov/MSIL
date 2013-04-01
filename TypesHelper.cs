@@ -7,7 +7,7 @@ using SDILReader;
 
 namespace MSIL
 {
-    public class MethodsHelper
+    public class TypesHelper
     {
         /// <summary>
         /// Gets the types from given assembly ordered by name.
@@ -42,7 +42,7 @@ namespace MSIL
         /// http://www.codeproject.com/Articles/14058/Parsing-the-IL-of-a-Method-Body
         /// </summary>
         /// <param name="methodInfo"></param>
-        /// <returns></returns>
+        /// <returns>List&lt;ILInstruction&gt;</returns>
         public static List<ILInstruction> GetILInstructions(MethodInfo methodInfo)
         {
             Globals.LoadOpCodes();

@@ -14,21 +14,19 @@ using SDILReader;
 
 namespace MSIL
 {
-    public partial class frmAssemblies : Form
+    public partial class frmILInstructions : Form
     {
         private Assembly assembly;
         private List<Type> types = new List<Type>();
         private Dictionary<Type, IEnumerable<MethodInfo>> methods = new Dictionary<Type, IEnumerable<MethodInfo>>();
 
-        public frmAssemblies()
+        public frmILInstructions()
         {
             InitializeComponent();
             gvILInstructions.AutoGenerateColumns = false;
-            tbAssemblyName.Text = @"C:\temp\mscorlib.dll";
-            ReadAndShowAssemblyInfo(tbAssemblyName.Text);
-            cbTypes.SelectedIndex = 2577;
-            cbMethods.SelectedIndex = 20;
-            cbMethods_SelectedIndexChanged(null, null);
+            tbAssemblyName.Focus();
+            //tbAssemblyName.Text = @"C:\temp\mscorlib.dll";
+            //ReadAndShowAssemblyInfo(tbAssemblyName.Text);
         }
 
         private void tbAssemblyName_Leave(object sender, EventArgs e)
@@ -39,29 +37,19 @@ namespace MSIL
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            try
+            using (OpenFileDialog _openFileDialog = new OpenFileDialog() { DefaultExt = ".dll" })
             {
-                using (OpenFileDialog _openFileDialog = new OpenFileDialog() { DefaultExt = ".dll" })
+                if ((!string.IsNullOrWhiteSpace(tbAssemblyName.Text)) && Directory.Exists(Path.GetDirectoryName(tbAssemblyName.Text)))
                 {
-                    if ((!string.IsNullOrWhiteSpace(tbAssemblyName.Text)) && Directory.Exists(Path.GetDirectoryName(tbAssemblyName.Text)))
-                    {
-                        _openFileDialog.InitialDirectory = tbAssemblyName.Text;
-                    }
-                    if (_openFileDialog.ShowDialog() != DialogResult.OK)
-                    {
-                        return;
-                    }
-                    if (string.IsNullOrWhiteSpace(_openFileDialog.FileName)) return;
-                    tbAssemblyName.Text = _openFileDialog.FileName;
-                    ReadAndShowAssemblyInfo(tbAssemblyName.Text);
+                    _openFileDialog.InitialDirectory = tbAssemblyName.Text;
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(string.Format("A problem occured while loading assembly {0}.{1}Exception data:{1}{2}", tbAssemblyName.Text, Environment.NewLine, ex.ToString()),
-                                "Problem",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
+                if (_openFileDialog.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                if (string.IsNullOrWhiteSpace(_openFileDialog.FileName)) return;
+                tbAssemblyName.Text = _openFileDialog.FileName;
+                ReadAndShowAssemblyInfo(tbAssemblyName.Text);
             }
         }
 
@@ -74,8 +62,13 @@ namespace MSIL
                 this.types.Clear();
                 this.methods.Clear();
                 this.assembly = Assembly.LoadFrom(inAssemblyFileName);
-                this.types = MethodsHelper.GetTypes(this.assembly);
+                this.types = TypesHelper.GetTypes(this.assembly);
                 ShowTypes();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(string.Format("A problem occured while loading assembly {0}.{1}Exception data:{1}{2}", inAssemblyFileName, Environment.NewLine, ex.ToString()),
+                                "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -95,23 +88,22 @@ namespace MSIL
         {
             if (!this.methods.ContainsKey(selectedType))
             {
-                this.methods.Add(selectedType, MethodsHelper.GetMethodInfos(selectedType));
+                this.methods.Add(selectedType, TypesHelper.GetMethodInfos(selectedType));
             }
             cbMethods.ValueMember = "mMethodInfo";
             cbMethods.DisplayMember = "mMethodName";
-            var _ds  = this.methods[selectedType].Select(m => new { mMethodInfo = m, mMethodName = m.ToString() }).ToList();
+            var _ds = this.methods[selectedType].Select(m => new { mMethodInfo = m, mMethodName = m.ToString() }).ToList();
             cbMethods.DataSource = _ds;
             cbMethods.AutoCompleteCustomSource.AddRange(_ds.Select(s => s.mMethodName).ToArray());
         }
 
         private void Show_ILInstructions(MethodInfo inMethodInfo)
         {
-            gvILInstructions.DataSource = MethodsHelper.GetILInstructions(inMethodInfo);
+            gvILInstructions.DataSource = TypesHelper.GetILInstructions(inMethodInfo);
         }
 
         private void cbTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.Text = cbTypes.SelectedIndex.ToString();
             if (!(cbTypes.SelectedValue is Type)) return;
             try
             {
